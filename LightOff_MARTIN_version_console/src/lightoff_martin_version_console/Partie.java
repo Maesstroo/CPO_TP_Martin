@@ -10,104 +10,121 @@ import java.util.Scanner;
  *
  * @author guilhem
  */
-// Classe Partie
+
 public class Partie {
-    private GrilleDejeu grille;
-    private int nbCoups;
+    
 
-    /**
-     * Constructeur de la classe Partie. Crée une nouvelle instance de la grille de cellules lumineuses
-     * avec le nombre de lignes et de colonnes spécifié, puis initialise le compteur de coups à zéro.
-     */
-    public Partie() {
-        grille = new GrilleDejeu(4, 4); // Par défaut, grille de 4x4 pour le niveau normal
-        nbCoups = 0;
-    }
+    GrilleDeCellules grille;
+   
 
-    /**
-     * Le c?ur de la classe Partie. Permet de jouer au jeu LightOff de manière interactive.
-     * Affiche l'état initial de la grille, puis entre dans une boucle de jeu qui continue tant que
-     * toutes les cellules ne sont pas éteintes.
-     */
-    public void lancerPartie() {
-        initialiserPartie();
-        afficherGrille();
+    int nbCoups;
 
-        Scanner scanner = new Scanner(System.in);
 
-        while (!grille.cellulesToutesEteintes() && !grille.cellulesToutesAllumees()) {
-            System.out.println("Choisis entre ligne, colonne, diagonale ou quitter : ");
-            String coup = scanner.nextLine();
 
-            if (coup.equals("ligne")) {
-                System.out.print("Entrez le numéro de la ligne : ");
-                int ligne = scanner.nextInt();
-                grille.activerLigneDeCellules(ligne - 1); // Soustrayez 1 pour correspondre à l'index 0-based
-            } else if (coup.equals("colonne")) {
-                System.out.print("Entrez le numéro de la colonne : ");
-                int colonne = scanner.nextInt();
-                grille.activerColonneDeCellules(colonne - 1); // Soustrayez 1 pour correspondre à l'index 0-based
-            } else if (coup.equals("diagonale")) {
-                grille.activerDiagonaleDescendante();
-            } else if (coup.equals("quitter")) {
-                System.out.println("Vous avez décider de quitter");
-                break;
-            } else {
-                System.out.println("Commande invalide.");
+    public  Partie() {
+       
+        this.nbCoups = 0;
+       
+        Scanner sc = new Scanner(System.in);
+        int difficulty;
+       
+        System.out.println("Lancement d'une partie de LightOff,\nChoisissez la difficulté que vous souhaitez :");
+       
+        do {
+        System.out.println("1) Facile (Grille 2x2)\n2) Normal (Grille 3x3)\n3) Difficile (Grille 4x4)\n4) Au choix (Grille au choix)");
+        difficulty = sc.nextInt();
+        switch(difficulty){
+            default->{
+                System.out.println("Erreur de saisie");
             }
-
-            nbCoups++;
-            afficherGrille();
-            scanner.nextLine();
+            case 1->{
+                System.out.println("Choix effectué : Grille Facile");
+                grille = new GrilleDeCellules(2,2);
+                this.initialiserPartie();
+                this.lancerPartie();
+            }
+            case 2->{
+                System.out.println("Choix effectué : Grille Normale");
+                grille = new GrilleDeCellules(3,3);
+                this.initialiserPartie();
+                this.lancerPartie();
+            }
+            case 3->{
+                System.out.println("Choix effectué : Grille Difficile");
+                grille = new GrilleDeCellules(4,4);
+                this.initialiserPartie();
+                this.lancerPartie();
+            }
+            case 4->{
+                int size;
+                System.out.println("Choix effectué : Grille au choix\nTaille de la grille voulue :");
+                size = sc.nextInt();
+                System.out.println("Très bien, la partie se lancera avec une grille de taille : "+size);
+                grille = new GrilleDeCellules(size,size);
+                this.initialiserPartie();
+                this.lancerPartie();
+            }
         }
-
-        if (grille.cellulesToutesEteintes()) {
-            System.out.println("Bravo ! Vous avez gagné en " + nbCoups + " coups.");
-        } else if (grille.cellulesToutesAllumees()) {
-            System.out.println("Bravo ! Vous avez gagné en " + nbCoups + " coups.");
-        }
+        }while(!(difficulty ==1 || difficulty ==2 || difficulty ==3 || difficulty ==4));
     }
+   
 
-    /**
-     * Affiche l'état actuel de la grille.
-     */
-    public void afficherGrille() {
+    public void  initialiserPartie(){
+        grille.melangerMatriceAleatoirement(20);
         System.out.println(grille);
     }
+   
 
-    /**
-     * Permet au joueur de choisir un niveau de difficulté : Facile, Normal ou Difficile.
-     * La taille de la grille varie en fonction du niveau choisi.
-     */
-    public void choisirNiveau() {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Choisis le niveau de difficulté que tu veux:");
-        System.out.println("1. Facile avec une taille 2x2");
-        System.out.println("2. Normal avec une taille 4x4");
-        System.out.println("3. Difficile avec une taille 8x8");
-        int choix = scanner.nextInt();
+    public void lancerPartie(){
+       
+        Scanner sc = new Scanner(System.in);
+        int coup;
+       
+        do{
+            do{
+            System.out.println("Choisissez l'action que vous souhaitez effectuer :\n1) Intervertir Ligne\n2) Intervertir Colonne\n3) Intervertir Diagonale Montante\n4) Intervertir Diagonale Descendante");
+            coup=sc.nextInt();
+            switch(coup){
+                default ->{
+                    System.out.println("Erreur de saisie");
+                }
+                case 1->{
+                    System.out.println("Entrez le numéro de la ligne concernée");
+                    int input;
+                    input = sc.nextInt();
+                    if(verifSaisie(input)!=-1){
+                    grille.activerLigneDeCellules(input);
+                    }
+                   
+                }
+                case 2->{
+                    System.out.println("Entrez le numéro de la colonne concernée");
+                    int input;
+                    input = sc.nextInt();
+                    if(verifSaisie(input)!=-1){
+                    grille.activerColonneDeCellules(input);
+                    }
+                }
+                case 3->{
+                    grille.activerDiagonaleMontante();
+                }
+                case 4->{
+                    grille.activerDiagonaleDescendante();
+                }
+            }
+            }while(!(coup==1 || coup==2 || coup==3 || coup==4));
+            nbCoups++;
+            System.out.println(grille);
 
-        switch (choix) {
-            case 1:
-                grille = new GrilleDejeu(2, 2);
-                break;
-            case 2:
-                grille = new GrilleDejeu(4, 4);
-                break;
-            case 3:
-                grille = new GrilleDejeu(8, 8);
-                break;
-            default:
-                System.out.println("Niveau de difficulté non valide. Le Niveau normal de taille 4x4 est choisi par défaut.");
-                break;
-        }
+           
+        }while(!grille.cellulesToutesEteintes());
+        System.out.println("Félicitations !\nNombre de coups necessaires pour gagner : "+nbCoups);
     }
-
-    /**
-     * Initialise une nouvelle partie en choisissant le niveau de difficulté et en mélangeant la grille.
-     */
-    public void initialiserPartie() {
-        choisirNiveau();
-        grille.melangerMatriceAleatoirement(15); // Mélanger la grille
-    }
+   
+    public int verifSaisie(int input){
+        if(input>grille.nbColonnes-1 || !(input>=0)){
+           System.out.println("Erreur de saisie : La taille de la grille est de "+grille.nbColonnes);
+           return -1;
+        } else return input;
+}
 }
